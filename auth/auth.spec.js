@@ -8,6 +8,7 @@ describe('register', function() {
   beforeEach(async () => {
     await db('users').truncate();
   });
+
   it('should register', function() {
     return request(server)
       .post('/api/auth/register')
@@ -15,6 +16,15 @@ describe('register', function() {
       .then(res => {
         expect(res.body.username).toEqual('snow white');
         expect(res.body.password).toBeTruthy();
+      });
+  });
+
+  it('should return 201', function() {
+    return request(server)
+      .post('/api/auth/register')
+      .send({ username: 'snow white', password: 'pass' })
+      .then(res => {
+        expect(res.status).toBe(201);
       });
   });
 });
@@ -27,12 +37,14 @@ describe('login', function() {
       .then(res => {
         expect(res.status).toBe(200);
       });
-      
   });
-  it('should return a token',  function(){
-      return request(server)
+
+  it('should return status 401', function() {
+    return request(server)
       .post('/api/auth/login')
-      .send({{ username: 'snow white', password: 'pass' })
-      .expect(res.body.token).toBeTruthy()
-  })
+      .send({ username: 'Notsnowwhite', password: 'Notpass' })
+      .then(res => {
+        expect(res.status).toBe(401);
+      });
+  });
 });
